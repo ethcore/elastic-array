@@ -121,7 +121,7 @@ macro_rules! impl_elastic_array {
 		impl<T> $name<T> where T: Copy + Default {
 			pub fn new() -> $name<T> {
 				$name {
-					raw: $dummy::Arr([T::default();  $size]),
+					raw: $dummy::Arr([T::default(); $size]),
 					len: 0
 				}
 			}
