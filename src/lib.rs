@@ -121,7 +121,7 @@ macro_rules! impl_elastic_array {
 		impl<T> $name<T> where T: Copy {
 			pub fn new() -> $name<T> {
 				$name {
-					raw: $dummy::Arr(unsafe { $crate::core_::mem::uninitialized() }),
+					raw: $dummy::Arr(unsafe { $crate::core_::mem::MaybeUninit::uninit().assume_init() }),
 					len: 0
 				}
 			}
@@ -176,7 +176,7 @@ macro_rules! impl_elastic_array {
 			}
 
 			pub fn clear(&mut self) {
-				self.raw = $dummy::Arr(unsafe { $crate::core_::mem::uninitialized() });
+				self.raw = $dummy::Arr(unsafe { $crate::core_::mem::MaybeUninit::uninit().assume_init() });
 				self.len = 0;
 			}
 
