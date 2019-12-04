@@ -85,7 +85,7 @@ macro_rules! impl_elastic_array {
 			fn cmp(&self, other: &Self) -> Ordering {
 				(&**self).cmp(&*other)
 			}
-		} 
+		}
 
 		impl<T> Hash for $name<T> where T: Hash {
 			fn hash<H>(&self, state: &mut H) where H: Hasher {
@@ -112,16 +112,16 @@ macro_rules! impl_elastic_array {
 			}
 		}
 
-		impl<T> Default for $name<T> where T: Copy {
+		impl<T> Default for $name<T> where T: Copy + Default {
 			fn default() -> $name<T> {
 				Self::new()
 			}
 		}
 
-		impl<T> $name<T> where T: Copy {
+		impl<T> $name<T> where T: Copy + Default {
 			pub fn new() -> $name<T> {
 				$name {
-					raw: $dummy::Arr(unsafe { $crate::core_::mem::MaybeUninit::uninit().assume_init() }),
+					raw: $dummy::Arr([T::default();  $size]),
 					len: 0
 				}
 			}
@@ -176,7 +176,7 @@ macro_rules! impl_elastic_array {
 			}
 
 			pub fn clear(&mut self) {
-				self.raw = $dummy::Arr(unsafe { $crate::core_::mem::MaybeUninit::uninit().assume_init() });
+				self.raw = $dummy::Arr([T::default(); $size]);
 				self.len = 0;
 			}
 
@@ -190,7 +190,7 @@ macro_rules! impl_elastic_array {
 					$dummy::Arr(a) => {
 						let mut vec = Vec::new();
 						vec.reserve(self.len);
-						unsafe {	
+						unsafe {
 							$crate::core_::ptr::copy(a.as_ptr(), vec.as_mut_ptr(), self.len);
 							vec.set_len(self.len);
 						}
@@ -208,7 +208,7 @@ macro_rules! impl_elastic_array {
 				if elen == 0 {
 					return;
 				}
-				
+
 				let len = self.len;
 				assert!(index <= len);
 
@@ -232,14 +232,14 @@ macro_rules! impl_elastic_array {
 							let ob = self.raw.slice().as_ptr();
 							let ep = elements.as_ptr();
 							let oe = ob.offset(index as isize);
-							
+
 							// copy begining of an array
 							ptr::copy(ob, p, index);
 
 							// copy new elements
 							ptr::copy(ep, p.offset(index as isize), elen);
 
-							// copy end of an array	
+							// copy end of an array
 							ptr::copy(oe, p.offset((index + elen) as isize), len - index);
 						}
 						vec.set_len(self.len + elen);
@@ -306,7 +306,7 @@ macro_rules! impl_elastic_array {
 			}
 		}
 
-		impl<'a, T: 'a + Copy> From<&'a [T]> for $name<T> {
+		impl<'a, T> From<&'a [T]> for $name<T> where T: 'a + Copy + Default {
 			fn from(s: &'a [T]) -> Self { Self::from_slice(s) }
 		}
 	)
