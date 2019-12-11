@@ -1,19 +1,19 @@
 [package]
 name = "elastic-array"
-version = "0.10.3"
-authors = ["debris <marek.kotewicz@gmail.com>"]
+version = "0.11.0"
+authors = ["debris <marek.kotewicz@gmail.com>", "Parity Technologies <admin@parity.io>"]
 license = "MIT"
 description = "Elastic vector backed by fixed size array"
-repository = "https://github.com/debris/elastic-array"
+repository = "https://github.com/paritytech/elastic-array"
 
 [dependencies]
 heapsize = { version = "0.4", optional = true }
 
 [dev-dependencies]
-rand = "0.4"
+rand = "0.7"
 
 [badges]
-travis-ci = { repository = "debris/elastic-array" }
+travis-ci = { repository = "paritytech/elastic-array" }
 
 [features]
 default = ["std"]
